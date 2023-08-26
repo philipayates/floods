@@ -8,7 +8,9 @@ To perform the robust local likelihood estimation:
   - The program `RLLgev.R` produces two components:
     - `parm.est` which for each flood year produces parameter estimates for the robust local likelihood model as well as estimates for the 99<sup>th</sup> percentile, mean, and median
     - `wts` which contains the robust weights for each observation used in a flood year's robust local likelihood model; each **column** represents a flood year
-  - The program `RLLqsd.R` produces the standard error estimate for the 99<sup>th</sup> percentile for a specific flood year. This program uses the program `RLL.sandwich.mat.R`.   
+  - The program `RLLqsd.R` produces the standard error estimate for the 99<sup>th</sup> percentile for a specific flood year. This program uses the program `RLL.sandwich.mat.R`.
+
+ See the program `steps for analysis.R` on the main page to see how to perform the robust local likelihood estimation.
     
    
       
