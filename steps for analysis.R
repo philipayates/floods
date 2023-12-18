@@ -1,56 +1,63 @@
-# This analysis uses h=0.3.
+# This analysis uses h=0.3 for the Congaree River
 
 library(tidyverse)
 
 # Read in the Congaree data
 y <- peak$Peak_Flow
+t <- (peak$Year-(min(peak$Year)-1))/131
 
-# Run the robustlikelihood estimation
-t <- (1:131)/131
-congareeRLL <- RLLgev(t,y,0.3,50000)
+# Run the robust likelihood estimation
+congaree.RLL <- RLLgev(t,y,0.3,50000)
+
+# 1%-chance flood standard error estimation
+Q100.sd <- NULL
+for(i in 1:131){
+  Q100.sd[i] <- RLLqsd(t[i],y,congaree.RLL$wts[i,],0.3,50000,
+                       congaree.RLL$parm.est[i,2:5])
+}
+
+# Save Results
+congaree <- as.data.frame(congaree.RLL$parm.est) %>%
+  mutate(Q100.sd=Q100.sd,LL.Q100=Q100-qnorm(0.975)*Q100.sd,
+         UL.Q100=Q100+qnorm(0.975)*Q100.sd,
+         Year=peak$Year,Peak=peak$Peak_Flow) %>%
+  mutate(LL.Q100=ifelse(LL.Q100<=0,0,LL.Q100))
 
 # Save the parameter estimates (for data visualization purposes)
 congaree.est <- as.data.frame(congareeRLL$parm.est) %>%
   mutate(Year=1892:2022)
 
-# 1%-chance flood standard error estimation
-Q99.SE <- NULL
-for(i in 1:131){
-  Q99.SE[i] <- RLLqsd(congareeRLL$parm.est[i,1],y,congareeRLL$wts[i,],0.35,50000,
-                      congareeRLL$parm.est[i,2:5])
-}
-
-congaree.est <- congaree.est %>%
-  mutate(Q99.SE=Q99.SE)
-
-# Boxplots of weights by flood year
-congareeRLL.wts <- cbind(congareeRLL$wts,row.num=1:131)
-congareeRLL.wts.long <- as.data.frame(congareeRLL.wts) %>%
-  pivot_longer(-row.num) %>%
-  mutate(Year=as.numeric(substr(name,2,4))+1891) %>%
+# Reshape robust local likelihood estimation weights for boxplots
+congaree.wts <- cbind(congaree.RLL$wts,row.num=1:131)
+congaree.wts.long <- as.data.frame(congaree.wts) %>%
+  pivot_longer(-row.num,values_to="Weight") %>%
+  mutate(Year=rep(1892:2022),131) %>%
   select(-name,-row.num) %>%
-  filter(!is.na(value))
-ggplot(congareeRLL.wts.long,aes(x=factor(Year),y=value))+geom_boxplot()+
-  xlab("Flood Year")+ylab("Robust Local Likelihood Weights")+theme_classic()+
-  scale_x_discrete(breaks=c("1900","1920","1940","1960","1980","2000","2020"))
+  filter(!is.na(Weight))
 
-# Check condition number of sandwich estimator
-cond.num <- NULL
-for(i in 1:131){
-  A <- RLL.sandwich.mat(t[i],y,congareeRLL$wts[,i],0.35,50000,
-                        congareeRLL$parm.est[i,2:5])
-  cond.num[i] <- kappa(A,exact=TRUE)
+# Stationary Analysis
+library(evd)
+mle.parms <- fgev(congareeRLL$Peak/50000)
+mle.parms.est <- mle.parms$estimate
+Q100.est <- qgev(0.99,loc=mle.parms.est[1]*50000,scale=mle.parms.est[2]*50000,
+                 shape=mle.parms.est[3])
+Q100.est.SE <- qsd_stationary(congareeRLL$Peak,50000,mle.parms.est)
+Q100.LL <- Q100.est-qnorm(0.975)*Q100.est.SE
+Q100.UL <- Q100.est+qnorm(0.975)*Q100.est.SE
+
+# Repeat these steps for the Illinois River using:
+t <- illinois$Index/max(illinois$Index)
+y <- illinois$Peak
+illinois.RLL <- RLLgev(t,y,0.3,35000)
+
+# Repeat these steps for the Winooski River using:
+t <- winooski$Index/max(winooski$Index)
+y <- winooski$Peak
+winooski.RLL <- matrix(NA,108,8)
+winooski.RLL.wts <- matrix(NA,108,108)
+for(i in c(1:94,96:97,99,101:108)){
+  winooski.RLL[i,] <- RLLgev(t[i],y,0.3,15000)$parm.est
+  winooski.RLL.wts[i,] <- RLLgev(t[i],y,0.3,15000)$wts
 }
 
-# Add condition number of sandwich estimator to Congaree data
-congaree.est <- congaree.est %>%
-  mutate(cond.num=cond.num)
 
-# The n for each flood year's robust likelihood estimation
-n.robust <- NULL
-for(i in 1:131){
-  n.robust[i] <- sum(!is.na(congareeRLL.wts[,i]))
-}
-
-congaree.est <- congaree.est %>%
-  mutate(n.robust=n.robust)
