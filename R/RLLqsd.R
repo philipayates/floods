@@ -1,9 +1,6 @@
 RLLqsd <- function(t,yinput,wts,h,scale.factor,parm){
   
-  source("~//Dropbox/Phil Yates/July 2021 Current Code/Update/RLL.sandwich.mat.R")
-  #source("~//Dropbox/Phil Yates/Phil New Functions/RLL.sandwich.mat.R")
-  #source("~//Dropbox/Phil Yates/July 2021 Current Code/sandwich.mat.R")
-  #source("~//Dropbox/Phil Yates/July 2021 Current Code/Meilijson.R")
+  source("RLL.sandwich.mat.R")
   
   beta0 <- as.numeric(parm[1])
   beta1 <- as.numeric(parm[2])
