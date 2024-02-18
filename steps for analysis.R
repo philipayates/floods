@@ -1,4 +1,4 @@
-# This analysis uses h=0.3 for the Congaree River
+# This analysis uses h=0.45 for the Congaree River
 
 library(tidyverse)
 
@@ -7,12 +7,12 @@ y <- peak$Peak_Flow
 t <- (peak$Year-(min(peak$Year)-1))/131
 
 # Run the robust likelihood estimation
-congaree.RLL <- RLLgev(t,y,0.3,50000)
+congaree.RLL <- RLLgev(t,y,0.45,50000)
 
 # 1%-chance flood standard error estimation
 Q100.sd <- NULL
 for(i in 1:131){
-  Q100.sd[i] <- RLLqsd(t[i],y,congaree.RLL$wts[i,],0.3,50000,
+  Q100.sd[i] <- RLLqsd(t[i],y,congaree.RLL$wts[i,],0.45,50000,
                        congaree.RLL$parm.est[i,2:5])
 }
 
@@ -45,19 +45,14 @@ Q100.est.SE <- qsd_stationary(congareeRLL$Peak,50000,mle.parms.est)
 Q100.LL <- Q100.est-qnorm(0.975)*Q100.est.SE
 Q100.UL <- Q100.est+qnorm(0.975)*Q100.est.SE
 
-# Repeat these steps for the Illinois River using:
+# Repeat these steps for the Illinois River using h=0.2:
 t <- illinois$Index/max(illinois$Index)
 y <- illinois$Peak
-illinois.RLL <- RLLgev(t,y,0.3,35000)
+illinois.RLL <- RLLgev(t,y,0.2,35000)
 
-# Repeat these steps for the Winooski River using:
+# Repeat these steps for the Winooski River using h=0.425:
 t <- winooski$Index/max(winooski$Index)
 y <- winooski$Peak
-winooski.RLL <- matrix(NA,108,8)
-winooski.RLL.wts <- matrix(NA,108,108)
-for(i in c(1:94,96:97,99,101:108)){
-  winooski.RLL[i,] <- RLLgev(t[i],y,0.3,15000)$parm.est
-  winooski.RLL.wts[i,] <- RLLgev(t[i],y,0.3,15000)$wts
-}
+winooski.RLL <- RLLgev(t,y,0.425,15000)
 
 
