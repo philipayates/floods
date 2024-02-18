@@ -14,6 +14,8 @@ To perform the robust local likelihood estimation:
 
  See the program `steps for analysis.R` on the main page to see how to perform the robust local likelihood estimation.
 
+ The program `l.cv.R` can be used to find the cross-validated log-likelihood for a given bandwidth, h.
+
  Results are found in the CSV file `congareeRLL.csv`, `illinoisRLL.csv`, and `winooskiRLL.csv`, respectively.
     
    
