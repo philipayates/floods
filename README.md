@@ -1,6 +1,6 @@
 # floods
 
-This repository contains data and R code for robust local likelihood estimation for nonstationary flood frequency analysis. The data and code presented here are used in the (submitted 2023) paper by John Grego and Philip Yates.
+This repository contains data and R code for robust local likelihood estimation for nonstationary flood frequency analysis. The data and code presented here are used in the 2024 paper by John Grego and Philip Yates, "Robust Local Likelihood Estimation for Non-stationary Flood Frequency Analysis," appearing in the _Journal of Agricultural, Biological, and Environmental Statistics_.
 
 To perform the robust local likelihood estimation:
 
