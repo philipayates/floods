@@ -31,7 +31,7 @@ congaree.est <- as.data.frame(congareeRLL$parm.est) %>%
 congaree.wts <- cbind(congaree.RLL$wts,row.num=1:131)
 congaree.wts.long <- as.data.frame(congaree.wts) %>%
   pivot_longer(-row.num,values_to="Weight") %>%
-  mutate(Year=rep(1892:2022),131) %>%
+  mutate(Year=rep(1892:2022,131)) %>%
   select(-name,-row.num) %>%
   filter(!is.na(Weight))
 
