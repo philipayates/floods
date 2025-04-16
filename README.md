@@ -9,7 +9,7 @@ To perform the robust local likelihood estimation:
   - For the Winooski River: Read the file `winooski.csv` into R. This file contains the annual maximum discharge for the Winooski River at Montpelier, VT (USGS Gage 04286000) for the flood years 1912 to 2023. The data can also be found on the [USGS Water Website](https://nwis.waterdata.usgs.gov/vt/nwis/peak?site_no=04286000&agency_cd=USGS&format=html).
   - The program `RLLgev.R` produces two components:
     - `parm.est` which for each flood year produces parameter estimates for the robust local likelihood model as well as estimates for the 99<sup>th</sup> percentile, mean, and median
-    - `wts` which contains the robust weights for each observation used in a flood year's robust local likelihood model; each **column** represents th robust weights associated with a given flood year while each **row** represents the weights used in a flood year's smoothing window.
+    - `wts` which contains the robust weights for each observation used in a flood year's robust local likelihood model; each **column** represents the robust weights associated with a given flood year while each **row** represents the weights used in a flood year's smoothing window.
   - The program `RLLqsd.R` produces the standard error estimate for the 99<sup>th</sup> percentile for a specific flood year. This program uses the program `RLL.sandwich.mat.R`.
 
  See the program `steps for analysis.R` on the main page to see how to perform the robust local likelihood estimation.
